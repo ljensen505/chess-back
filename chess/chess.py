@@ -1,5 +1,7 @@
 from uuid import uuid4
 
+from chess.pieces.piece import Piece
+
 from .board import BLACK, WHITE, Board
 
 
@@ -22,6 +24,7 @@ class Chess:
                 "game_state": self.game_state,
                 "turn_count": self.turn_count,
                 "turn": self.turn,
+                "captured_pieces": self.board.captured_pieces,
             }.items()
         )
 

@@ -1,3 +1,5 @@
+from pprint import pprint
+
 from chess import Chess
 
 if __name__ == "__main__":
@@ -7,3 +9,4 @@ if __name__ == "__main__":
     print(chess)
     chess.make_move("E7", "E5")
     print(chess)
+    pprint(dict(chess))

@@ -4,13 +4,14 @@ class Piece:
         self.position = position
         self.has_moved = False
         self.icon = "?"
+        self.available_moves: list[str] = []
+        self.type = type(self).__name__.lower()
 
         if len(self.position) != 2:
             raise ValueError("Position must be two characters long")
 
     def __repr__(self) -> str:
-        piece_type = type(self).__name__
-        return f"{piece_type}({self.color}, {self.position})"
+        return f"{self.type.title()}({self.color}, {self.position})"
 
     def __str__(self) -> str:
         return f"{self.icon}"
@@ -19,6 +20,15 @@ class Piece:
         return iter(
             {
                 "color": self.color.lower(),
-                "type": type(self).__name__.lower(),
+                "type": self.type,
             }.items()
         )
+
+    def set_available_moves(self, moves: list[str]) -> None:
+        self.available_moves = moves
+
+    def set_has_moved(self) -> None:
+        self.has_moved = True
+
+    def set_position(self, position: str) -> None:
+        self.position = position
