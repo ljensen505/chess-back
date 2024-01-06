@@ -1,5 +1,9 @@
 from uuid import UUID
 
+from pytest import raises
+
+from chess.board import BLACK, WHITE
+
 from .chess import Chess
 
 
@@ -24,3 +28,24 @@ def test_iter():
     assert isinstance(board, dict)
     assert len(board) == 32
     assert all([isinstance(p, dict) for p in board.values()])
+
+
+def test_make_move():
+    chess = Chess()
+    assert chess.turn == WHITE
+    assert chess.turn_count == 0
+    chess.make_move("E2", "E4")
+    assert chess.turn == BLACK
+    assert chess.turn_count == 1
+    chess.make_move("E7", "E5")
+    assert chess.turn == WHITE
+    assert chess.turn_count == 2
+
+    with raises(ValueError):
+        chess.make_move("E2", "E4")
+    assert chess.turn == WHITE
+    assert chess.turn_count == 2
+    with raises(ValueError):
+        chess.make_move("A4", "A5")
+    assert chess.turn == WHITE
+    assert chess.turn_count == 2
