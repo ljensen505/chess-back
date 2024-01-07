@@ -1,8 +1,8 @@
 from pytest import raises
 
-from chess.pieces import Piece, piece
-
-from .board import WHITE, Board
+import chess
+from chess.board import Board
+from chess.pieces import BLACK, WHITE, Piece, piece
 
 
 def test_init():
@@ -78,21 +78,49 @@ def test_move_pawn():
     assert piece is not None
     assert piece.has_moved is False
     assert piece.color == WHITE
-    board.move_piece("A2", "A3")
+    board.move_piece(piece, "A3")
     moved_piece = board.get_piece("A3")
     assert moved_piece is not None
     assert moved_piece is piece
     assert moved_piece.has_moved is True
-    assert moved_piece.available_moves == ["A4"]
+    assert moved_piece.available_moves == {"A4"}
     assert board.get_piece("A2") is None
 
     # test invalid move
     with raises(ValueError):
-        board.move_piece("A3", "A5")
+        board.move_piece(piece, "A5")
     with raises(ValueError):
-        board.move_piece("A3", "A2")
+        board.move_piece(piece, "A2")
     with raises(ValueError):
-        board.move_piece("E4", "E5")
+        board.move_piece(piece, "E5")
+
+
+def test_knight_moves():
+    board = Board()
+    piece = board.get_piece("B1")
+    assert piece is not None
+    assert piece.color == WHITE
+    assert piece.position == "B1"
+    assert piece.has_moved is False
+    assert piece.icon == "♞"
+    assert piece.available_moves == {"A3", "C3"}
+    board.move_piece(piece, "C3")
+    moved_piece = board.get_piece("C3")
+    assert moved_piece is not None
+    assert moved_piece is piece
+    assert moved_piece.has_moved is True
+    assert moved_piece.available_moves == {"A4", "B5", "D5", "E4", "B1"}
+    assert board.get_piece("B1") is None
+
+    # test invalid move
+    with raises(ValueError):
+        board.move_piece(piece, "C5")
+    with raises(ValueError):
+        board.move_piece(piece, "C2")
+    with raises(ValueError):
+        board.move_piece(piece, "A2")
+    with raises(ValueError):
+        board.move_piece(piece, "D3")
 
 
 # TODO: add tests for other piece moves as they are implemented

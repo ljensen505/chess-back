@@ -1,4 +1,4 @@
-from .piece import Piece
+from .piece import BLACK, WHITE, Piece
 
 
 class Pawn(Piece):

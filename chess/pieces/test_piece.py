@@ -12,7 +12,7 @@ def test_piece_init():
     assert Piece("WHITE", "A1").position == "A1"
     assert Piece("WHITE", "A1").has_moved == False
     assert Piece("WHITE", "A1").icon == "?"
-    assert Piece("WHITE", "A1").available_moves == []
+    assert Piece("WHITE", "A1").available_moves == set()
     assert Piece("WHITE", "A1").type == "piece"
 
 
@@ -63,8 +63,8 @@ def test_iter():
 
 def test_set_available_moves():
     piece = Pawn("WHITE", "A1")
-    piece.set_available_moves(["A2", "A3"])
-    assert piece.available_moves == ["A2", "A3"]
+    piece.set_available_moves({"A2", "A3"})
+    assert piece.available_moves == {"A2", "A3"}
 
 
 def test_set_has_moved():
