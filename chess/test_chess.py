@@ -134,19 +134,8 @@ def test_rook_moves():
     }
 
 
-def test_targets():
+def test_king_targets():
     chess = Chess()
-    pawn_targets(chess)
-    knight_targets(chess)
-    chess = Chess()
-    rook_targets(chess)
-    chess = Chess()
-    bishop_targets(chess)
-    chess = Chess()
-    queen_targets(chess)
-
-
-def king_targets(chess: Chess):
     white_king = chess.board.get_piece("E1")
     black_king = chess.board.get_piece("E8")
     assert isinstance(white_king, King)
@@ -163,10 +152,11 @@ def king_targets(chess: Chess):
     assert white_king.targets == {"E5"}
     assert black_king.targets == set()
     chess.make_move("E6", "D5")
-    assert white_king.targets == {"E4", "D4"}
+    assert black_king.targets == {"E4", "D4"}
 
 
-def queen_targets(chess: Chess):
+def test_queen_targets():
+    chess = Chess()
     white_queen = chess.board.get_piece("D1")
     black_queen = chess.board.get_piece("D8")
     assert isinstance(white_queen, Queen)
@@ -181,7 +171,8 @@ def queen_targets(chess: Chess):
     assert black_queen.targets == {"H2", "F2", "H5", "E4"}
 
 
-def bishop_targets(chess: Chess):
+def test_bishop_targets():
+    chess = Chess()
     white_bishop = chess.board.get_piece("C1")
     black_bishop = chess.board.get_piece("F8")
     assert isinstance(white_bishop, Piece)
@@ -197,7 +188,8 @@ def bishop_targets(chess: Chess):
     assert white_bishop.targets == {"G7"}
 
 
-def pawn_targets(chess: Chess):
+def test_pawn_targets():
+    chess = Chess()
     white_pawn = chess.board.get_piece("A2")
     black_pawn = chess.board.get_piece("B7")
     assert isinstance(white_pawn, Pawn)
@@ -212,7 +204,10 @@ def pawn_targets(chess: Chess):
     assert black_pawn.targets == {"A4"}
 
 
-def knight_targets(chess: Chess):
+def test_knight_targets():
+    chess = Chess()
+    chess.make_move("A2", "A4")
+    chess.make_move("B7", "B5")
     white_knight = chess.board.get_piece("B1")
     black_knight = chess.board.get_piece("G8")
     assert isinstance(white_knight, Knight)
@@ -227,7 +222,8 @@ def knight_targets(chess: Chess):
     assert black_knight.targets == {"E4"}
 
 
-def rook_targets(chess: Chess):
+def test_rook_targets():
+    chess = Chess()
     white_rook = chess.board.get_piece("A1")
     black_rook = chess.board.get_piece("H8")
     assert isinstance(white_rook, Rook)
