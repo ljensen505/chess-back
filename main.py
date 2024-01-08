@@ -5,7 +5,6 @@ from chess import Chess
 if __name__ == "__main__":
     chess = Chess()
 
-    chess.make_move("A2", "A4")
-    chess.make_move("A7", "A5")
-    chess.make_move("A1", "A3")
-    chess.make_move("A8", "A6")
+    chess.make_move("E2", "E4")
+    chess.make_move("E7", "E5")
+    chess.make_move("D1", "H5")

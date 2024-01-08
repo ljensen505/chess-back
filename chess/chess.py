@@ -52,7 +52,8 @@ class Chess:
     ) -> None:
         if piece.color != self.turn:
             raise ValueError("Not your turn")
-
+        if target and target.color == piece.color:
+            raise ValueError("Can't take your own piece")
         if end not in piece.available_moves:
             raise ValueError("Invalid move")
 

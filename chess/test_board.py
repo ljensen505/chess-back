@@ -1,8 +1,12 @@
 from pytest import raises
 
 import chess
+from chess import board
 from chess.board import Board
 from chess.pieces import BLACK, WHITE, Piece, piece
+from chess.pieces.bishop import Bishop
+from chess.pieces.queen import Queen
+from chess.pieces.rook import Rook
 
 
 def test_init():
@@ -53,10 +57,10 @@ def test_iter():
         "C8": {"color": "black", "type": "bishop"},
         "F1": {"color": "white", "type": "bishop"},
         "F8": {"color": "black", "type": "bishop"},
-        "E1": {"color": "white", "type": "queen"},
-        "E8": {"color": "black", "type": "queen"},
-        "D1": {"color": "white", "type": "king"},
-        "D8": {"color": "black", "type": "king"},
+        "D1": {"color": "white", "type": "queen"},
+        "D8": {"color": "black", "type": "queen"},
+        "E1": {"color": "white", "type": "king"},
+        "E8": {"color": "black", "type": "king"},
     }
 
 
@@ -121,6 +125,27 @@ def test_knight_moves():
         board.move_piece(piece, "A2")
     with raises(ValueError):
         board.move_piece(piece, "D3")
+
+
+def test_bishop_moves():
+    board = Board()
+    piece = board.get_piece("C1")
+    assert isinstance(piece, Bishop)
+    assert piece.available_moves == set()
+
+
+def test_queen_moves():
+    board = Board()
+    piece = board.get_piece("D1")
+    assert isinstance(piece, Queen)
+    assert piece.available_moves == set()
+
+
+def test_rook_moves():
+    board = Board()
+    piece = board.get_piece("A1")
+    assert isinstance(piece, Rook)
+    assert piece.available_moves == set()
 
 
 # TODO: add tests for other piece moves as they are implemented

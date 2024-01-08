@@ -5,8 +5,10 @@ from pytest import raises
 import chess
 from chess import Chess
 from chess.pieces import BLACK, WHITE, Piece
+from chess.pieces.king import King
 from chess.pieces.knight import Knight
 from chess.pieces.pawn import Pawn
+from chess.pieces.queen import Queen
 from chess.pieces.rook import Rook
 
 
@@ -140,6 +142,43 @@ def test_targets():
     rook_targets(chess)
     chess = Chess()
     bishop_targets(chess)
+    chess = Chess()
+    queen_targets(chess)
+
+
+def king_targets(chess: Chess):
+    white_king = chess.board.get_piece("E1")
+    black_king = chess.board.get_piece("E8")
+    assert isinstance(white_king, King)
+    assert isinstance(black_king, King)
+    chess.make_move("E2", "E4")
+    assert white_king.targets == set()
+    chess.make_move("E7", "E5")
+    assert black_king.targets == set()
+    chess.make_move("E1", "E2")
+    chess.make_move("E8", "E7")
+    chess.make_move("E2", "E3")
+    chess.make_move("E7", "E6")
+    chess.make_move("E3", "D4")
+    assert white_king.targets == {"E5"}
+    assert black_king.targets == set()
+    chess.make_move("E6", "D5")
+    assert white_king.targets == {"E4", "D4"}
+
+
+def queen_targets(chess: Chess):
+    white_queen = chess.board.get_piece("D1")
+    black_queen = chess.board.get_piece("D8")
+    assert isinstance(white_queen, Queen)
+    assert isinstance(black_queen, Queen)
+    chess.make_move("E2", "E4")
+    assert white_queen.targets == set()
+    chess.make_move("E7", "E5")
+    assert black_queen.targets == set()
+    chess.make_move("D1", "H5")
+    assert white_queen.targets == {"F7", "H7", "E5"}
+    chess.make_move("D8", "H4")
+    assert black_queen.targets == {"H2", "F2", "H5", "E4"}
 
 
 def bishop_targets(chess: Chess):
