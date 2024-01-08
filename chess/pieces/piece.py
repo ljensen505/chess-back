@@ -7,6 +7,7 @@ class Piece:
         self.color = color
         self.position = position
         self.has_moved = False
+        self.is_captured = False
         self.icon = "?"
         self.available_moves: set[str] = set()
         self.targets: set[str] = set()
@@ -40,3 +41,7 @@ class Piece:
 
     def set_position(self, position: str) -> None:
         self.position = position
+
+    def set_is_captired(self) -> None:
+        self.position = ""
+        self.is_captured = True

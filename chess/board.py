@@ -56,12 +56,18 @@ class Board:
 
         self.set_piece_moves()
 
-    def move_piece(self, piece: Piece, end: str) -> None:
-        if end not in piece.available_moves:
+    def move_piece(self, piece: Piece, end: str, target: Piece | None = None) -> None:
+        if end not in piece.available_moves.union(piece.targets):
             raise ValueError("Invalid move")
+        if target and target.color == piece.color:
+            raise ValueError("Can't take your own piece")
+
+        if target:
+            self._capture_piece(target)
 
         self.active_pieces[end] = piece
         del self.active_pieces[piece.position]
+
         piece.set_position(end)
         piece.set_has_moved()
         self.set_piece_moves()
@@ -84,7 +90,14 @@ class Board:
                 piece.set_available_moves(available_moves)
                 piece.set_targets(available_targets)
             else:
+                # this should never happen
                 raise ValueError(f"Invalid piece type: {piece.type}")
+
+    def _capture_piece(self, piece: Piece) -> None:
+        """Removes a piece from the board and adds it to the captured pieces list"""
+        self.captured_pieces.append(piece)
+        del self.active_pieces[piece.position]
+        piece.set_is_captired()
 
     def _pawn_moves(self, piece: Piece) -> tuple[set[str], set[str]]:
         """Returns a tuple of available moves and targets for a pawn"""

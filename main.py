@@ -6,5 +6,11 @@ if __name__ == "__main__":
     chess = Chess()
 
     chess.make_move("E2", "E4")
-    chess.make_move("E7", "E5")
-    chess.make_move("D1", "H5")
+    print(chess)
+    chess.make_move("D7", "D5")
+    print(chess)
+
+    chess.make_move("E4", "D5")
+    print(chess)
+    chess.make_move("D8", "D5")
+    pprint(chess)

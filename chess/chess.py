@@ -1,8 +1,7 @@
 from uuid import uuid4
 
+from chess.board import BLACK, COLS, ROWS, WHITE, Board
 from chess.pieces.piece import Piece
-
-from .board import BLACK, WHITE, Board
 
 
 class Chess:
@@ -45,7 +44,7 @@ class Chess:
 
         self.turn_count += 1
         self.turn = BLACK if self.turn == WHITE else WHITE
-        self.board.move_piece(piece, end)
+        self.board.move_piece(piece, end, target)
 
     def _validate_piece_and_target(
         self, piece: Piece, target: Piece | None, end: str
@@ -54,7 +53,9 @@ class Chess:
             raise ValueError("Not your turn")
         if target and target.color == piece.color:
             raise ValueError("Can't take your own piece")
-        if end not in piece.available_moves:
+        print(piece.available_moves)
+        print(piece.targets)
+        if end not in piece.available_moves.union(piece.targets):
             raise ValueError("Invalid move")
 
     def _validate_move(self, start: str, end: str) -> None:
@@ -62,8 +63,8 @@ class Chess:
             raise ValueError("Positions must be two characters long")
         if start == end:
             raise ValueError("Start and end positions must be different")
-        if (start[0] not in "ABCDEFGH" or start[1] not in "12345678") or (
-            end[0] not in "ABCDEFGH" or end[1] not in "12345678"
+        if (start[0] not in COLS or start[1] not in ROWS) or (
+            end[0] not in COLS or end[1] not in ROWS
         ):
             raise ValueError("Invalid position")
         if self.game_state != "active":

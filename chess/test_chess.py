@@ -251,3 +251,38 @@ def test_rook_targets():
     assert white_rook.targets == {"C7", "E6"}
     chess.make_move("B7", "B6")
     assert white_rook.targets == {"C7", "E6", "B6"}
+
+
+def test_capture():
+    chess = Chess()
+    num_active_pieces = len(chess.board.active_pieces)
+    num_captured_pieces = len(chess.board.captured_pieces)
+    white_pawn = chess.board.get_piece("E2")
+    black_pawn = chess.board.get_piece("D7")
+    assert isinstance(white_pawn, Pawn)
+    assert isinstance(black_pawn, Pawn)
+    chess.make_move("E2", "E4")
+    chess.make_move("D7", "D5")
+    assert white_pawn.targets == {"D5"}
+    assert black_pawn.targets == {"E4"}
+    chess.make_move("E4", "D5")
+    assert white_pawn.targets == set()
+    assert black_pawn.is_captured
+    assert len(chess.board.active_pieces) == num_active_pieces - 1
+    assert len(chess.board.captured_pieces) == num_captured_pieces + 1
+    assert chess.board.get_piece("D5") is white_pawn
+    assert black_pawn not in chess.board.active_pieces.values()
+    assert black_pawn in chess.board.captured_pieces
+    assert not black_pawn.position  # should be an empty string
+    assert white_pawn.position == "D5"
+    assert chess.board.get_piece("D5") is white_pawn
+
+    black_queen = chess.board.get_piece("D8")
+    assert isinstance(black_queen, Queen)
+    assert black_queen.targets == {"D5"}
+    chess.make_move("D8", "D5")
+    assert white_pawn.is_captured
+    assert len(chess.board.active_pieces) == num_active_pieces - 2
+    assert len(chess.board.captured_pieces) == num_captured_pieces + 2
+    assert black_queen.position == "D5"
+    assert chess.board.get_piece("D5") is black_queen
