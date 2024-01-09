@@ -53,8 +53,7 @@ class Chess:
             raise ValueError("Not your turn")
         if target and target.color == piece.color:
             raise ValueError("Can't take your own piece")
-        print(piece.available_moves)
-        print(piece.targets)
+
         if end not in piece.available_moves.union(piece.targets):
             raise ValueError("Invalid move")
 

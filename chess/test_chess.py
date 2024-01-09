@@ -1,3 +1,4 @@
+from calendar import c
 from uuid import UUID
 
 from pytest import raises
@@ -286,3 +287,66 @@ def test_capture():
     assert len(chess.board.captured_pieces) == num_captured_pieces + 2
     assert black_queen.position == "D5"
     assert chess.board.get_piece("D5") is black_queen
+
+
+def test_castling():
+    chess = Chess()
+    white_castle_dest = "G1"
+    black_castle_dest = "C8"
+    white_king = chess.board.get_piece("E1")
+    black_king = chess.board.get_piece("E8")
+    assert isinstance(white_king, King)
+    assert isinstance(black_king, King)
+
+    chess.make_move("E2", "E4")
+    assert white_castle_dest not in white_king.available_moves
+    assert black_castle_dest not in black_king.available_moves
+    chess.make_move("E7", "E5")
+    assert white_castle_dest not in white_king.available_moves
+    assert black_castle_dest not in black_king.available_moves
+
+    with raises(ValueError):
+        chess.make_move("E1", "G1")
+
+    chess.make_move("F1", "C4")
+    assert white_castle_dest not in white_king.available_moves
+    assert black_castle_dest not in black_king.available_moves
+    chess.make_move("F8", "C5")
+    assert white_castle_dest not in white_king.available_moves
+    assert black_castle_dest not in black_king.available_moves
+
+    chess.make_move("G1", "F3")
+    assert white_castle_dest in white_king.available_moves
+    assert black_castle_dest not in black_king.available_moves
+
+    chess.make_move("G8", "F6")
+    assert white_castle_dest in white_king.available_moves
+    assert black_castle_dest not in black_king.available_moves
+
+    chess.make_move("E1", "G1")
+    assert white_king.position == white_castle_dest
+    castled_rook = chess.board.get_piece("F1")
+    assert isinstance(castled_rook, Rook)
+    assert castled_rook.has_moved
+    assert white_king.has_moved
+
+    moves = [
+        ("D8", "E7"),
+        ("B2", "B3"),
+        ("B7", "B6"),
+        ("C1", "A3"),
+        ("C8", "A6"),
+        ("B1", "C3"),
+        ("B8", "C6"),
+        ("A3", "B4"),
+    ]
+
+    for move in moves:
+        chess.make_move(*move)
+    assert black_castle_dest in black_king.available_moves
+    chess.make_move("E8", "C8")
+    castled_rook = chess.board.get_piece("D8")
+    assert isinstance(castled_rook, Rook)
+    assert castled_rook.has_moved
+    assert black_king.has_moved
+    assert black_king.position == black_castle_dest

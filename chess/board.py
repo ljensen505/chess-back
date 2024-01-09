@@ -1,6 +1,17 @@
 from colorama import Back, Fore, init
 
-from chess.pieces import BLACK, WHITE, Bishop, King, Knight, Pawn, Piece, Queen, Rook
+from chess.pieces import (
+    BLACK,
+    WHITE,
+    Bishop,
+    King,
+    Knight,
+    Pawn,
+    Piece,
+    Queen,
+    Rook,
+    king,
+)
 
 init(autoreset=True)
 
@@ -62,11 +73,18 @@ class Board:
         if target and target.color == piece.color:
             raise ValueError("Can't take your own piece")
 
+        is_castling = isinstance(piece, King) and end in self._get_castlable_squares(
+            piece
+        )
+
         if target:
             self._capture_piece(target)
 
         self.active_pieces[end] = piece
         del self.active_pieces[piece.position]
+
+        if is_castling and isinstance(piece, King):
+            self._castle(piece, end)
 
         piece.set_position(end)
         piece.set_has_moved()
@@ -76,6 +94,7 @@ class Board:
         return self.active_pieces.get(position)
 
     def set_piece_moves(self) -> None:
+        """Sets available moves and targets for all pieces on the board"""
         move_table = {
             "pawn": self._pawn_moves,
             "knight": self._knight_moves,
@@ -183,7 +202,7 @@ class Board:
             possible_moves.add(square)
         return possible_moves, targets
 
-    def _rook_moves(self, piece: Piece) -> tuple[set[str], set[str]]:
+    def _rook_moves(self, piece: Rook) -> tuple[set[str], set[str]]:
         """Returns a tuple of available moves and targets for a rook"""
         possible_moves = set()
         targets = set()
@@ -214,7 +233,7 @@ class Board:
             ],  # right
         ]
 
-    def _bishop_moves(self, piece: Piece) -> tuple[set[str], set[str]]:
+    def _bishop_moves(self, piece: Bishop) -> tuple[set[str], set[str]]:
         """Returns a tuple of available moves and targets for a bishop"""
         possible_moves = set()
         targets = set()
@@ -262,7 +281,7 @@ class Board:
 
         return [up_right, down_right, up_left, down_left]
 
-    def _queen_moves(self, piece: Piece) -> tuple[set[str], set[str]]:
+    def _queen_moves(self, piece: Queen) -> tuple[set[str], set[str]]:
         """Returns a list of available moves for a queen"""
         possible_moves = set()
         targets = set()
@@ -276,7 +295,7 @@ class Board:
 
         return possible_moves, targets
 
-    def _king_moves(self, piece: Piece) -> tuple[set[str], set[str]]:
+    def _king_moves(self, piece: King) -> tuple[set[str], set[str]]:
         """Returns a list of available moves for a king"""
         adjacent_squares = {
             f"{chr(ord(piece.position[0]) + 1)}{int(piece.position[1])}",
@@ -288,13 +307,75 @@ class Board:
             f"{chr(ord(piece.position[0]) - 1)}{int(piece.position[1]) + 1}",
             f"{chr(ord(piece.position[0]) - 1)}{int(piece.position[1]) - 1}",
         }
+
+        castlable_squares = self._get_castlable_squares(piece)
+
         available_moves = {
             m
-            for m in adjacent_squares
+            for m in adjacent_squares.union(castlable_squares)
             if self.get_piece(m) is None
             and len(m) == 2
             and m[0] in COLS
             and m[1] in ROWS
         }
         targets = self._find_targets(piece, adjacent_squares)
+
         return available_moves, targets
+
+    def _get_castlable_squares(self, king: King) -> set[str]:
+        """Returns a set of squares that are under attack"""
+
+        if king.has_moved or king.check:
+            return set()
+
+        rooks_to_king = self._map_rooks_to_king_dests(king)
+        castlable_squares = set()
+        for rook, sq in rooks_to_king.items():
+            if self.get_piece(sq) is None:
+                castlable_squares.add(sq)
+
+        return castlable_squares
+
+    def _map_rooks_to_king_dests(self, king: King) -> dict[Rook, str]:
+        """Returns a dict of rooks and the corresponding king potential destinations"""
+        rook_map = {
+            self.get_piece("A1"): "C1",
+            self.get_piece("H1"): "G1",
+            self.get_piece("A8"): "C8",
+            self.get_piece("H8"): "G8",
+        }
+        return {
+            r: rook_map[r]
+            for r in rook_map
+            if isinstance(r, Rook) and not r.has_moved and r.color == king.color
+        }
+
+    def _map_rooks_to_rook_dests(self, king: King) -> dict[Rook, str]:
+        """Returns a dict of rooks and the corresponding rook potential destinations"""
+        rook_map = {
+            self.get_piece("A1"): "D1",
+            self.get_piece("H1"): "F1",
+            self.get_piece("A8"): "D8",
+            self.get_piece("H8"): "F8",
+        }
+        return {
+            r: rook_map[r]
+            for r in rook_map
+            if isinstance(r, Rook) and not r.has_moved and r.color == king.color
+        }
+
+    def _get_castling_rook(self, king: King, end: str) -> Rook:
+        """Returns a rook that is castling with the king"""
+        rook_map = self._map_rooks_to_king_dests(king)
+        for rook in rook_map:
+            if end in rook_map[rook]:
+                return rook
+        raise ValueError("Invalid castling move. Could not find rook")
+
+    def _castle(self, king: King, end: str) -> None:
+        """Moves the rook when castling"""
+        print("castling")
+        rook = self._get_castling_rook(king, end)
+        rook_dest = self._map_rooks_to_rook_dests(king)[rook]
+        self.move_piece(rook, rook_dest)
+        rook.set_has_moved()
