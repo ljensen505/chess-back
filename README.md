@@ -38,3 +38,11 @@ pytest app
 ```bash
 pytest chess
 ```
+
+### Known Issues
+
+- [ ] En passant
+- [ ] deploy to pi
+- [ ] castling check not comprehensive
+- [ ] add check
+- [ ] add checkmate
