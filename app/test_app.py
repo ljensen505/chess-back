@@ -1,4 +1,5 @@
 from pprint import pprint
+from uuid import uuid4
 
 from fastapi.testclient import TestClient
 
@@ -17,7 +18,7 @@ def test_read_root():
 
 
 def test_get_games():
-    game_id = post_game()
+    game_ids = [post_game() for _ in range(10)]
     response = client.get("/games")
     assert response.status_code == 200
     body = response.json()
@@ -30,11 +31,11 @@ def test_get_games():
         assert isinstance(game["self"], str)
         assert game["self"].startswith("/games/")
 
-    response = client.get(f"/games/{game_id}")
-    assert response.status_code == 200
+    response_ids = [game["game_id"] for game in body]
 
-    response = client.delete(f"/games/{game_id}")
-    assert response.status_code == 200
+    assert all(game_id in response_ids for game_id in game_ids)
+    for game_id in game_ids:
+        client.delete(f"/games/{game_id}")
 
 
 def test_get_game():
@@ -50,11 +51,16 @@ def test_get_game():
         "turn_count",
     ]
     board = body["board"]
+
     assert len(board) == 32
     assert all(val in body for val in vals)
 
     response = client.delete(f"/games/{game_id}")
     assert response.status_code == 200
+
+    fake_id = uuid4()
+    response = client.get(f"/games/{fake_id}")
+    assert response.status_code == 404
 
 
 def post_game() -> str:
