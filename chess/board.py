@@ -1,17 +1,6 @@
 from colorama import Back, Fore, init
 
-from chess.pieces import (
-    BLACK,
-    WHITE,
-    Bishop,
-    King,
-    Knight,
-    Pawn,
-    Piece,
-    Queen,
-    Rook,
-    king,
-)
+from chess.pieces import BLACK, WHITE, Bishop, King, Knight, Pawn, Piece, Queen, Rook
 
 init(autoreset=True)
 
@@ -22,7 +11,6 @@ ROWS = "12345678"
 class Board:
     def __init__(self):
         self.active_pieces: dict[str, Piece] = {}
-        self.captured_pieces: list[Piece] = []
 
         self._init_pieces()
 
@@ -114,7 +102,7 @@ class Board:
 
     def _capture_piece(self, piece: Piece) -> None:
         """Removes a piece from the board and adds it to the captured pieces list"""
-        self.captured_pieces.append(piece)
+
         del self.active_pieces[piece.position]
         piece.set_is_captired()
 

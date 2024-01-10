@@ -5,14 +5,14 @@ from chess.pieces.piece import Piece
 
 
 class Chess:
-    def __init__(self):
+    def __init__(self, white_player: str = "", black_player: str = ""):
         self.id = uuid4()
         self.board = Board()
         self.game_state = "active"
-        self.check = False
-        self.checkmate = False
         self.turn_count = 0
         self.turn = WHITE
+        self.white_player = white_player
+        self.black_player = black_player
 
     def __repr__(self) -> str:
         return f"Chess({self.id})\n\n{self.board}\n"
@@ -25,9 +25,6 @@ class Chess:
                 "game_state": self.game_state,
                 "turn_count": self.turn_count,
                 "turn": self.turn,
-                "captured_pieces": self.board.captured_pieces,
-                "check": self.check,
-                "checkmate": self.checkmate,
             }.items()
         )
 

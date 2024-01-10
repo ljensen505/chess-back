@@ -1,5 +1,4 @@
-from calendar import c
-from uuid import UUID
+from uuid import UUID, uuid4
 
 from pytest import raises
 
@@ -18,6 +17,15 @@ def test_init():
     assert isinstance(chess, Chess)
     assert isinstance(chess.id, UUID)
     assert len(str(chess.id)) == 36
+    assert hasattr(chess, "board")
+    assert chess.white_player == ""
+    assert chess.black_player == ""
+
+    white_id: str = str(uuid4())
+    black_id: str = str(uuid4())
+    chess = Chess(white_player=white_id, black_player=black_id)
+    assert chess.white_player == white_id
+    assert chess.black_player == black_id
 
 
 def test_repr():
@@ -34,9 +42,6 @@ def test_iter():
         "game_state",
         "turn_count",
         "turn",
-        "captured_pieces",
-        "check",
-        "checkmate",
     ]
     assert all([val in dict(chess) for val in vals])
     board = dict(chess)["board"]
@@ -257,7 +262,6 @@ def test_rook_targets():
 def test_capture():
     chess = Chess()
     num_active_pieces = len(chess.board.active_pieces)
-    num_captured_pieces = len(chess.board.captured_pieces)
     white_pawn = chess.board.get_piece("E2")
     black_pawn = chess.board.get_piece("D7")
     assert isinstance(white_pawn, Pawn)
@@ -270,10 +274,8 @@ def test_capture():
     assert white_pawn.targets == set()
     assert black_pawn.is_captured
     assert len(chess.board.active_pieces) == num_active_pieces - 1
-    assert len(chess.board.captured_pieces) == num_captured_pieces + 1
     assert chess.board.get_piece("D5") is white_pawn
     assert black_pawn not in chess.board.active_pieces.values()
-    assert black_pawn in chess.board.captured_pieces
     assert not black_pawn.position  # should be an empty string
     assert white_pawn.position == "D5"
     assert chess.board.get_piece("D5") is white_pawn
@@ -284,7 +286,7 @@ def test_capture():
     chess.make_move("D8", "D5")
     assert white_pawn.is_captured
     assert len(chess.board.active_pieces) == num_active_pieces - 2
-    assert len(chess.board.captured_pieces) == num_captured_pieces + 2
+
     assert black_queen.position == "D5"
     assert chess.board.get_piece("D5") is black_queen
 
