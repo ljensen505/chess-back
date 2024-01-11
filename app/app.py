@@ -3,12 +3,27 @@ import pickle
 from uuid import UUID
 
 from fastapi import FastAPI, HTTPException, status
+from fastapi.middleware.cors import CORSMiddleware
 
 from __version__ import __version__
 from app.models import AvailableRoutes, ChessGame, GameInfo, Move, game_to_response
 from chess import Chess
 
 app = FastAPI()
+
+origins = [
+    "http://localhost:3000",
+    "http://localhost:",
+    "https://api.chess.v2.lucasjensen.me/",
+]
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=origins,
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 
 GAMES_DIR = os.path.join(os.path.dirname(__file__), "games")
 

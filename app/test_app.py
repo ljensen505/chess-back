@@ -1,5 +1,4 @@
 from pprint import pprint
-from sys import version
 from uuid import uuid4
 
 from fastapi.testclient import TestClient
