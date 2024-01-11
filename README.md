@@ -39,6 +39,10 @@ pytest app
 pytest chess
 ```
 
+### Deployment
+
+run me on port 5052 on the Pi
+
 ### Known Issues
 
 - [ ] En passant
