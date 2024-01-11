@@ -1,4 +1,5 @@
 from pprint import pprint
+from sys import version
 from uuid import uuid4
 
 from fastapi.testclient import TestClient
@@ -16,12 +17,18 @@ def test_read_root():
     assert "available_routes" in body
     assert "/" in body["available_routes"]
 
+    assert "version" in body
+    version = body["version"]
+    assert isinstance(version, str)
+    assert len(version.split(".")) == 3
+
 
 def test_get_games():
     game_ids = [post_game() for _ in range(10)]
     response = client.get("/games")
     assert response.status_code == 200
     body = response.json()
+    pprint(body)
     assert isinstance(body, list)
     for game in body:
         assert "game_id" in game
