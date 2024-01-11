@@ -1,6 +1,5 @@
 import os
 import pickle
-from sys import version
 from uuid import UUID
 
 from fastapi import FastAPI, HTTPException, status
