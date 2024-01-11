@@ -12,9 +12,9 @@ from chess import Chess
 app = FastAPI()
 
 origins = [
-    'http://localhost:3000',
-    'http://localhost:',
-    'https://api.chess.v2.lucasjensen.me/',
+    "http://localhost:3000",
+    "http://localhost:",
+    "https://api.chess.v2.lucasjensen.me/",
 ]
 
 app.add_middleware(
@@ -22,7 +22,7 @@ app.add_middleware(
     allow_origins=origins,
     allow_credentials=True,
     allow_methods=["*"],
-    allow_headers=['*'],
+    allow_headers=["*"],
 )
 
 GAMES_DIR = os.path.join(os.path.dirname(__file__), "games")
