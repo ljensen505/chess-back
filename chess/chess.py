@@ -5,7 +5,7 @@ from chess.pieces.piece import Piece
 
 
 class Chess:
-    def __init__(self, white_player: str = "", black_player: str = ""):
+    def __init__(self, white_player: str = "", black_player: str = "", owner: str = ""):
         self.id = uuid4()
         self.board = Board()
         self.game_state = "active"
@@ -13,6 +13,7 @@ class Chess:
         self.turn = WHITE
         self.white_player = white_player
         self.black_player = black_player
+        self.owner = owner
 
     def __repr__(self) -> str:
         return f"Chess({self.id})\n\n{self.board}\n"

@@ -1,4 +1,5 @@
 from uuid import UUID
+
 from pydantic import BaseModel
 
 
@@ -7,3 +8,4 @@ class GameInfo(BaseModel):
 
     game_id: UUID
     self: str
+    owner_id: UUID
