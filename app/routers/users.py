@@ -1,10 +1,11 @@
 from uuid import UUID
 
-from fastapi import APIRouter, HTTPException, status
+from fastapi import APIRouter, Security, status
+from icecream import ic
 
-from app.admin import VerifyToken
-from app.db import queries
-from app.models import UserDetails
+from app.admin.utils import VerifyToken
+from app.controllers.controller import APIController
+from app.models.users import BaseUser, DetailedUser, NewUser
 
 router = APIRouter(
     prefix="/users",
@@ -14,37 +15,41 @@ router = APIRouter(
 
 auth = VerifyToken()
 
-
-def get_all_users() -> list[UserDetails]:
-    """Get a list of all users"""
-    users = queries.get_users()
-    users_details: list[UserDetails] = []
-    for user in users:
-        games = queries.get_games_by_user_id(user.id)
-        users_details.append(UserDetails(**user.model_dump(), games=games))
-
-    return users_details
+controller = APIController()
 
 
 @router.get("/", status_code=status.HTTP_200_OK)
-async def get_users() -> list[UserDetails]:
-    """Get a list of all users"""
-    return get_all_users()
-
-
-def get_user_by_id(user_id: UUID) -> UserDetails:
-    """Get a user by their ID"""
-    user = queries.get_user_by_id(user_id)
-    if user is None:
-        raise HTTPException(status_code=404, detail="User not found")
-    games = queries.get_games_by_user_id(user_id)
-    return UserDetails(**user.model_dump(), games=games)
+async def get_users() -> list[BaseUser]:
+    """
+    Get a list of all users
+    Only returns publicly available information
+    Does not require auth
+    """
+    return controller.get_base_users()
 
 
 @router.get("/{user_id}", status_code=status.HTTP_200_OK)
-async def get_user(user_id: UUID) -> UserDetails:
-    """Get a user by their ID"""
-    return get_user_by_id(user_id)
+async def get_user(user_id: UUID) -> BaseUser:
+    """
+    Get a user by their ID
+    Returns publicly available information
+    Does not require auth
+    """
+    return controller.get_base_user(user_id)
 
 
-# TODO: add a route to insert new user into database
+@router.post("/", status_code=status.HTTP_201_CREATED)
+async def create_user(
+    user: NewUser, auth_result=Security(auth.verify)
+) -> BaseUser | None:
+    """Create a new user"""
+    return controller.create_user(user, auth_result)
+
+
+@router.get("/details/", status_code=status.HTTP_200_OK)
+async def get_detailed_user(auth_result=Security(auth.verify)) -> DetailedUser:
+    """
+    Get user details by their uuid
+    Returns private information and required auth
+    """
+    return controller.get_detailed_user(auth_result.get("sub"))

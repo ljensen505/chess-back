@@ -3,8 +3,9 @@ from fastapi import FastAPI, status
 from fastapi.middleware.cors import CORSMiddleware
 
 from __version__ import __version__
-from app.models import AvailableRoutes
-from app.routers import games_router, users_router
+from app.models.routes import AvailableRoutes
+from app.routers.games import router as games_router
+from app.routers.users import router as users_router
 
 load_dotenv(override=True)
 
