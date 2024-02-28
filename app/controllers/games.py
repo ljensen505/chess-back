@@ -21,7 +21,6 @@ from app.models.users import DetailedUser
 
 class GameController:
     def __init__(self) -> None:
-
         self.queries = GameQueries()
         self.games_dir = os.path.join(os.path.dirname(__file__), "games")
 
