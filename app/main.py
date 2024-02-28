@@ -18,6 +18,7 @@ origins = [
     "http://localhost:",
     "https://api.chess.v2.lucasjensen.me/",
     "https://chess.lucasjensen.me/",
+    "https://chess.lucasjensen.me",
 ]
 
 app.add_middleware(
