@@ -1,7 +1,7 @@
 import uuid
 from uuid import UUID
 
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, EmailStr, Field
 
 from app.models.game import BaseGame
 
@@ -11,9 +11,9 @@ class NewUser(BaseModel):
     User model for creating a new user
     """
 
-    email: str
     name: str
     username: str
+    email: EmailStr | None = None
 
 
 class BaseUser(BaseModel):
@@ -37,5 +37,5 @@ class DetailedUser(BaseUser):
     """
 
     auth0_id: str
-    email: str
     name: str
+    email: EmailStr | None = None

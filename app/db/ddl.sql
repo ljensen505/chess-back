@@ -4,7 +4,7 @@ CREATE TABLE `users` (
     `user_id` CHAR(36) NOT NULL PRIMARY KEY,
     `auth0_id` VARCHAR(255) NOT NULL UNIQUE,
     `name` VARCHAR(255) NOT NULL,
-    `email` VARCHAR(255) NOT NULL UNIQUE,
+    `email` VARCHAR(255),
     `username` VARCHAR(255) NOT NULL UNIQUE
 ) ENGINE = InnoDB DEFAULT CHARSET = utf8;
 DROP TABLE IF EXISTS `games`;
